@@ -1,0 +1,29 @@
+---
+- hosts: remote
+  become: yes
+  become_user: root
+  tasks:
+   - name: Create a login user
+     user:
+        name: databarracks
+        password: '$6$UePhGbV4$9PiNQ4/IJQW4FhhoNWiI4ai87KdNsAJhwrCKvFdMWbsld9BIXsZjYsmez295qHAT32FLIBsvtrgAV5pbQ/Ydf1'
+        groups: sudo
+        state: present
+        shell: /bin/bash
+        system: no
+        createhome: yes
+        home: /home/databarracks
+        generate_ssh_key: yes
+   - name: Transfer ssh auth key
+     copy:
+       src: /home/ubuntu/.ssh/authorized_keys
+       dest: /home/databarracks/.ssh/authorized_keys
+       owner: databarracks
+       group: databarracks
+       mode: 0600
+   - name: Remove Ubuntu from sudo
+     user:
+        name: ubuntu
+        groups: ubuntu
+        append: no
+
